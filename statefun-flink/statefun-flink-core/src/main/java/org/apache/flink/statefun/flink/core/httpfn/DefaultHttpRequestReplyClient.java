@@ -71,11 +71,15 @@ final class DefaultHttpRequestReplyClient implements RequestReplyClient {
   }
 
   private static FromFunction parseResponse(Response response) {
-    final InputStream httpResponseBody = responseBody(response);
+    try {
+      final InputStream httpResponseBody = responseBody(response);
     try {
       return parseProtobufOrThrow(FromFunction.parser(), httpResponseBody);
     } finally {
       IOUtils.closeQuietly(httpResponseBody);
+      } finally {
+        response.close();
+      }
     }
   }
 
