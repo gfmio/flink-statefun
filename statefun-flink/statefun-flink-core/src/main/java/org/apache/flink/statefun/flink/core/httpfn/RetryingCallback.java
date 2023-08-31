@@ -102,21 +102,52 @@ final class RetryingCallback implements Callback {
   }
 
   private void onResponseUnsafe(Call call, Response response) {
+    if (response.isSuccessful()) {
+      resultFuture.complete(response);
+      return;
+    }
+
+    boolean isRetryable = RETRYABLE_HTTP_CODES.contains(response.code());
+
+    String prefixString = isRetryable
+      ? "Non-successful, retryable HTTP response code " + response.code() + " received"
+      : "Non-successful, non-retryable HTTP response code " + response.code() + " received";
+
     try {
-      if (response.isSuccessful()) {
-        resultFuture.complete(response);
-        return;
+      ResponseBody body = response.body();
+      if (body == null) {
+        String errorMessage = prefixString + " and the response body is null.";
+        if (isRetryable) {
+          LOG.warn(errorMessage);
+        } else {
+          LOG.error(errorMessage);
+        }
+      } else {
+        String bodyText = body.string();
+        String errorMessage = prefixString + " with body \"" + bodyText + "\".";
+        if (isRetryable) {
+          LOG.warn(errorMessage);
+        } else {
+          LOG.error(errorMessage);
+        }
       }
-      if (!RETRYABLE_HTTP_CODES.contains(response.code()) && response.code() < 500) {
-        throw new IllegalStateException("Non successful HTTP response code " + response.code());
+    } catch (IOException exception) {
+      String errorMessage = prefixString + " and encountered an IOException while reading the body.";
+      if (isRetryable) {
+        LOG.warn(errorMessage);
+      } else {
+        LOG.error(errorMessage);
       }
-      if (!retryAfterApplyingBackoff(call)) {
-        throw new IllegalStateException(
-            "Maximal request time has elapsed. Last known error is: invalid HTTP response code "
-                + response.code());
-      }
-    } finally {
-      response.close();
+    }
+
+    response.close();
+
+    if (!isRetryable && response.code() < 500) {
+      throw new IllegalStateException("Non successful HTTP response code " + response.code());
+    }
+
+    if (!retryAfterApplyingBackoff(call)) {
+      throw new IllegalStateException("Maximal request time has elapsed. Last known error is: invalid HTTP response code " + response.code());
     }
   }
 
