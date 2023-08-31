@@ -87,6 +87,7 @@ final class RetryingCallback implements Callback {
   }
 
   private void onFailureUnsafe(Call call, IOException cause) {
+    try {
     if (isShutdown.getAsBoolean()) {
       throw new IllegalStateException("An exception caught during shutdown.", cause);
     }
@@ -97,6 +98,11 @@ final class RetryingCallback implements Callback {
     if (!retryAfterApplyingBackoff(call)) {
       throw new IllegalStateException(
           "Maximal request time has elapsed. Last cause is attached", cause);
+    }
+    } finally {
+      if (!call.isCanceled() && !call.isExecuted()) {
+        call.cancel();
+      }
     }
   }
 
