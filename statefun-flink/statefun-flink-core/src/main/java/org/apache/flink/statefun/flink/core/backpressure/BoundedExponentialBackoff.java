@@ -18,14 +18,14 @@
 
 package org.apache.flink.statefun.flink.core.backpressure;
 
+import static java.lang.Math.random;
+import static java.lang.Math.round;
+
 import java.time.Duration;
 import java.util.Objects;
 import org.apache.flink.annotation.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.lang.Math.random;
-import static java.lang.Math.round;
 
 public final class BoundedExponentialBackoff {
   private static final Logger LOG = LoggerFactory.getLogger(BoundedExponentialBackoff.class);
@@ -38,20 +38,34 @@ public final class BoundedExponentialBackoff {
 
   private long nextSleepTimeNanos;
 
-  public BoundedExponentialBackoff(Duration initialBackoffDuration, double backOffIncreaseFactor, double jitter, Duration maxRequestDuration) {
-    this(SystemNanoTimer.instance(), initialBackoffDuration, backOffIncreaseFactor, jitter, maxRequestDuration);
+  public BoundedExponentialBackoff(
+      Duration initialBackoffDuration,
+      double backOffIncreaseFactor,
+      double jitter,
+      Duration maxRequestDuration) {
+    this(
+        SystemNanoTimer.instance(),
+        initialBackoffDuration,
+        backOffIncreaseFactor,
+        jitter,
+        maxRequestDuration);
   }
 
   @VisibleForTesting
   BoundedExponentialBackoff(
-    Timer timer, Duration initialBackoffDuration, double backOffIncreaseFactor, double jitter, Duration maxRequestDuration) {
+      Timer timer,
+      Duration initialBackoffDuration,
+      double backOffIncreaseFactor,
+      double jitter,
+      Duration maxRequestDuration) {
     this.timer = Objects.requireNonNull(timer);
     this.requestStartTimeInNanos = timer.now();
     this.backOffIncreaseFactor = backOffIncreaseFactor;
     this.jitter = jitter;
     this.maxRequestDurationInNanos = maxRequestDuration.toNanos();
     this.nextSleepTimeNanos = initialBackoffDuration.toNanos();
-    this.nextSleepTimeNanos = round(initialBackoffDuration.toNanos() * (1.0 + jitter * (-1.0 + 2.0 * random())));
+    this.nextSleepTimeNanos =
+        round(initialBackoffDuration.toNanos() * (1.0 + jitter * (-1.0 + 2.0 * random())));
   }
 
   public boolean applyNow() {
@@ -62,7 +76,10 @@ public final class BoundedExponentialBackoff {
       return false;
     }
 
-    LOG.info(String.format("Applying exponential backoff. Sleeping for %f seconds.", actualSleep * Math.pow(10, -9) ));
+    LOG.info(
+        String.format(
+            "Applying exponential backoff. Sleeping for %f seconds.",
+            actualSleep * Math.pow(10, -9)));
 
     timer.sleep(actualSleep);
     return true;
@@ -75,7 +92,8 @@ public final class BoundedExponentialBackoff {
 
   private long nextAmountOfNanosToSleep() {
     final long current = nextSleepTimeNanos;
-    nextSleepTimeNanos = round(nextSleepTimeNanos * backOffIncreaseFactor * (1 + jitter * (-1 + 2 * random())));
+    nextSleepTimeNanos =
+        round(nextSleepTimeNanos * backOffIncreaseFactor * (1 + jitter * (-1 + 2 * random())));
     return current;
   }
 }

@@ -63,7 +63,9 @@ final class RetryingCallback implements Callback {
       Timeout timeout,
       BooleanSupplier isShutdown) {
     this.resultFuture = new CompletableFuture<>();
-    this.backoff = new BoundedExponentialBackoff(INITIAL_BACKOFF_DURATION, BACKOFF_INCREASE_FACTOR, BACKOFF_JITTER, duration(timeout));
+    this.backoff =
+        new BoundedExponentialBackoff(
+            INITIAL_BACKOFF_DURATION, BACKOFF_INCREASE_FACTOR, BACKOFF_JITTER, duration(timeout));
     this.requestSummary = requestSummary;
     this.metrics = metrics;
     this.isShutdown = Objects.requireNonNull(isShutdown);
@@ -94,11 +96,20 @@ final class RetryingCallback implements Callback {
     }
 
     final double callDurationSeconds = timeSinceRequestStartedInNanoseconds() / Math.pow(10, 9);
-    LOG.warn("Retriable exception caught after " + callDurationSeconds + " seconds while trying to deliver a message: " + requestSummary, cause);
+    LOG.warn(
+        "Retriable exception caught after "
+            + callDurationSeconds
+            + " seconds while trying to deliver a message: "
+            + requestSummary,
+        cause);
     metrics.remoteInvocationFailures();
 
     if (!retryAfterApplyingBackoff(call)) {
-      throw new IllegalStateException("Maximal request time has elapsed after " + callDurationSeconds + " seconds. Last cause is attached", cause);
+      throw new IllegalStateException(
+          "Maximal request time has elapsed after "
+              + callDurationSeconds
+              + " seconds. Last cause is attached",
+          cause);
     }
   }
 
@@ -153,11 +164,9 @@ final class RetryingCallback implements Callback {
       final double callDurationSeconds = timeSinceRequestStartedInNanoseconds() / Math.pow(10, 9);
 
       throw new IllegalStateException(
-              String.format(
-                      "Maximal request time has elapsed after %f seconds. Last known error is: invalid HTTP response code %d",
-                      callDurationSeconds,
-                      response.code()
-              ));
+          String.format(
+              "Maximal request time has elapsed after %f seconds. Last known error is: invalid HTTP response code %d",
+              callDurationSeconds, response.code()));
     }
   }
 
