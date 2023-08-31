@@ -42,8 +42,8 @@ import org.slf4j.LoggerFactory;
 final class RetryingCallback implements Callback {
   private static final Duration INITIAL_BACKOFF_DURATION = Duration.ofMillis(10);
 
-  private static final Set<Integer> RETRYABLE_HTTP_CODES =
-      new HashSet<>(Arrays.asList(409, 420, 408, 429, 499, 500));
+  private static final Set<Integer> RETRYABLE_HTTP_CODES = new HashSet<>(
+      Arrays.asList(400, 408, 409, 420, 429, 499, 500, 503, 504));
 
   private static final Logger LOG = LoggerFactory.getLogger(RetryingCallback.class);
 
@@ -130,7 +130,8 @@ final class RetryingCallback implements Callback {
   }
 
   /**
-   * Executes the runnable, and completes {@link #resultFuture} with any exceptions thrown, during
+   * Executes the runnable, and completes {@link #resultFuture} with any
+   * exceptions thrown, during
    * its execution.
    */
   private void tryWithFuture(RunnableWithException runnable) {
