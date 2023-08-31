@@ -87,22 +87,17 @@ final class RetryingCallback implements Callback {
   }
 
   private void onFailureUnsafe(Call call, IOException cause) {
-    try {
-      if (isShutdown.getAsBoolean()) {
-        throw new IllegalStateException("An exception caught during shutdown.", cause);
-      }
-      LOG.warn(
-          "Retriable exception caught while trying to deliver a message: " + requestSummary, cause);
-      metrics.remoteInvocationFailures();
+    if (isShutdown.getAsBoolean()) {
+      throw new IllegalStateException("An exception caught during shutdown.", cause);
+    }
 
-      if (!retryAfterApplyingBackoff(call)) {
-        throw new IllegalStateException(
-            "Maximal request time has elapsed. Last cause is attached", cause);
-      }
-    } finally {
-      if (!call.isCanceled() && !call.isExecuted()) {
-        call.cancel();
-      }
+    LOG.warn(
+        "Retriable exception caught while trying to deliver a message: " + requestSummary, cause);
+    metrics.remoteInvocationFailures();
+
+    if (!retryAfterApplyingBackoff(call)) {
+      throw new IllegalStateException(
+          "Maximal request time has elapsed. Last cause is attached", cause);
     }
   }
 
