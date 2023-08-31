@@ -109,9 +109,10 @@ final class RetryingCallback implements Callback {
 
     boolean isRetryable = RETRYABLE_HTTP_CODES.contains(response.code());
 
-    String prefixString = isRetryable
-      ? "Non-successful, retryable HTTP response code " + response.code() + " received"
-      : "Non-successful, non-retryable HTTP response code " + response.code() + " received";
+    String prefixString =
+        isRetryable
+            ? "Non-successful, retryable HTTP response code " + response.code() + " received"
+            : "Non-successful, non-retryable HTTP response code " + response.code() + " received";
 
     try {
       ResponseBody body = response.body();
@@ -132,7 +133,8 @@ final class RetryingCallback implements Callback {
         }
       }
     } catch (IOException exception) {
-      String errorMessage = prefixString + " and encountered an IOException while reading the body.";
+      String errorMessage =
+          prefixString + " and encountered an IOException while reading the body.";
       if (isRetryable) {
         LOG.warn(errorMessage);
       } else {
@@ -147,7 +149,9 @@ final class RetryingCallback implements Callback {
     }
 
     if (!retryAfterApplyingBackoff(call)) {
-      throw new IllegalStateException("Maximal request time has elapsed. Last known error is: invalid HTTP response code " + response.code());
+      throw new IllegalStateException(
+          "Maximal request time has elapsed. Last known error is: invalid HTTP response code "
+              + response.code());
     }
   }
 
