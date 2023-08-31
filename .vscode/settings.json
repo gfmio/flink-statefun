@@ -3,7 +3,7 @@
         "source.fixAll": true,
         "source.organizeImports": false
     },
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
