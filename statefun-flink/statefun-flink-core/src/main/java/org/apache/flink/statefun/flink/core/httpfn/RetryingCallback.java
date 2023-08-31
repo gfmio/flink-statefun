@@ -107,6 +107,7 @@ final class RetryingCallback implements Callback {
   }
 
   private void onResponseUnsafe(Call call, Response response) {
+    try {
     if (response.isSuccessful()) {
       resultFuture.complete(response);
       return;
@@ -118,6 +119,9 @@ final class RetryingCallback implements Callback {
       throw new IllegalStateException(
           "Maximal request time has elapsed. Last known error is: invalid HTTP response code "
               + response.code());
+    }
+    } finally {
+      response.close();
     }
   }
 
