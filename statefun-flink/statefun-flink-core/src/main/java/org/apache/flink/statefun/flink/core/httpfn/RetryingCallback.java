@@ -130,8 +130,7 @@ final class RetryingCallback implements Callback {
   }
 
   /**
-   * Executes the runnable, and completes {@link #resultFuture} with any
-   * exceptions thrown, during
+   * Executes the runnable, and completes {@link #resultFuture} with any exceptions thrown, during
    * its execution.
    */
   private void tryWithFuture(RunnableWithException runnable) {
