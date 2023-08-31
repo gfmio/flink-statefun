@@ -21,6 +21,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import okhttp3.OkHttpClient;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.statefun.flink.core.feedback.FeedbackKey;
@@ -29,9 +32,6 @@ import org.apache.flink.statefun.flink.core.translation.FlinkUniverse;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.FlinkUserCodeClassLoader;
 import org.apache.flink.util.FlinkUserCodeClassLoaders;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import okhttp3.OkHttpClient;
 
 public class StatefulFunctionsJob {
 
@@ -71,10 +71,12 @@ public class StatefulFunctionsJob {
 
     env.getConfig().enableObjectReuse();
 
-    // Enable fine-grained logging for OkHttp to get details about unclosed connections when they occur
+    // Enable fine-grained logging for OkHttp to get details about unclosed connections when they
+    // occur
     Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.FINE);
 
-    final StatefulFunctionsUniverse statefulFunctionsUniverse = StatefulFunctionsUniverses.get(
+    final StatefulFunctionsUniverse statefulFunctionsUniverse =
+        StatefulFunctionsUniverses.get(
             Thread.currentThread().getContextClassLoader(), stateFunConfig);
 
     final StatefulFunctionsUniverseValidator statefulFunctionsUniverseValidator =
