@@ -70,7 +70,12 @@ public class RequestReplyFunctionTest {
 
   private final RequestReplyFunction functionUnderTest =
       new RequestReplyFunction(
-          FN_TYPE, testInitialRegisteredState("session", "com.foo.bar/myType"), 10, 5, client, true);
+          FN_TYPE,
+          testInitialRegisteredState("session", "com.foo.bar/myType"),
+          10,
+          5,
+          client,
+          true);
 
   @Test
   public void example() {

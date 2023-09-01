@@ -75,7 +75,7 @@ final class DefaultHttpRequestReplyClient implements RequestReplyClient {
     if (response == null) {
       return null;
     }
-    
+
     try {
       final InputStream httpResponseBody = responseBody(response);
       try {

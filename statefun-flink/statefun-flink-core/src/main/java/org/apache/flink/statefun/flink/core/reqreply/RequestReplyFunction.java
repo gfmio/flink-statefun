@@ -94,8 +94,17 @@ public final class RequestReplyFunction implements StatefulFunction {
   @Persisted private final PersistedRemoteFunctionValues managedStates;
 
   public RequestReplyFunction(
-      FunctionType functionType, int maxNumBatchRequests, int maxRetries, RequestReplyClient client) {
-    this(functionType, new PersistedRemoteFunctionValues(), maxNumBatchRequests, maxRetries, client, false);
+      FunctionType functionType,
+      int maxNumBatchRequests,
+      int maxRetries,
+      RequestReplyClient client) {
+    this(
+        functionType,
+        new PersistedRemoteFunctionValues(),
+        maxNumBatchRequests,
+        maxRetries,
+        client,
+        false);
   }
 
   @VisibleForTesting

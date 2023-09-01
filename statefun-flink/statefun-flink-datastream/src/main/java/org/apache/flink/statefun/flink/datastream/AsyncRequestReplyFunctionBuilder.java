@@ -26,7 +26,6 @@ import org.apache.flink.statefun.flink.core.httpfn.*;
 import org.apache.flink.statefun.flink.core.nettyclient.NettyRequestReplySpec;
 import org.apache.flink.statefun.sdk.FunctionType;
 import org.apache.flink.util.TimeUtils;
-
 import src.main.java.org.apache.flink.statefun.flink.core.httpfn.HttpFunctionEndpointSpec;
 import src.main.java.org.apache.flink.statefun.flink.core.httpfn.TargetFunctions;
 import src.main.java.org.apache.flink.statefun.flink.core.httpfn.TransportClientConstants;

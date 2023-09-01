@@ -61,7 +61,6 @@ final class RetryingCallback implements Callback {
 
   private int retryAttempts;
 
-
   RetryingCallback(
       ToFunctionRequestSummary requestSummary,
       RemoteInvocationMetrics metrics,
