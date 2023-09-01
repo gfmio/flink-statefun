@@ -137,7 +137,7 @@ public class RequestReplyFunctionTest {
 
   @Test
   public void returnedMessageReleaseBackpressure() {
-    RequestReplyFunction functionUnderTest = new RequestReplyFunction(FN_TYPE, 2, client);
+    RequestReplyFunction functionUnderTest = new RequestReplyFunction(FN_TYPE, 2, 5, client);
 
     // the following invocations should cause backpressure
     functionUnderTest.invoke(context, TypedValue.getDefaultInstance());
