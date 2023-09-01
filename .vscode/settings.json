@@ -20,7 +20,7 @@
     "java.compile.nullAnalysis.mode": "automatic",
     "java.configuration.updateBuildConfiguration": "interactive",
     "java.project.sourcePaths": [
-        "src/main/java"
+        "src/main/java",
     ],
     "terminal.integrated.defaultProfile.linux": "zsh",
     "terminal.integrated.defaultProfile.osx": "zsh",
@@ -28,5 +28,8 @@
     "redhat.telemetry.enabled": false,
     "[yaml]": {
         "editor.defaultFormatter": "redhat.vscode-yaml"
-    }
+    },
+    "files.watcherExclude": {
+        "**/target": true
+    },
 }
