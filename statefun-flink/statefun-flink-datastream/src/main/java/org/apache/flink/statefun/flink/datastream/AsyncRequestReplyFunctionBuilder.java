@@ -26,11 +26,6 @@ import org.apache.flink.statefun.flink.core.httpfn.*;
 import org.apache.flink.statefun.flink.core.nettyclient.NettyRequestReplySpec;
 import org.apache.flink.statefun.sdk.FunctionType;
 import org.apache.flink.util.TimeUtils;
-import src.main.java.org.apache.flink.statefun.flink.core.httpfn.HttpFunctionEndpointSpec;
-import src.main.java.org.apache.flink.statefun.flink.core.httpfn.TargetFunctions;
-import src.main.java.org.apache.flink.statefun.flink.core.httpfn.TransportClientConstants;
-import src.main.java.org.apache.flink.statefun.flink.core.httpfn.TransportClientSpec;
-import src.main.java.org.apache.flink.statefun.flink.core.httpfn.UrlPathTemplate;
 
 /** A builder for async RequestReply remote function type. */
 public class AsyncRequestReplyFunctionBuilder extends StatefulFunctionBuilder {
