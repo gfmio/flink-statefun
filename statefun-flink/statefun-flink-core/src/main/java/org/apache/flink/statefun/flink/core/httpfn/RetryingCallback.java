@@ -30,6 +30,7 @@ import java.util.function.BooleanSupplier;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okio.Timeout;
 import org.apache.flink.statefun.flink.core.backpressure.BoundedExponentialBackoff;
 import org.apache.flink.statefun.flink.core.metrics.RemoteInvocationMetrics;
@@ -54,14 +55,18 @@ final class RetryingCallback implements Callback {
   private final ToFunctionRequestSummary requestSummary;
   private final RemoteInvocationMetrics metrics;
   private final BooleanSupplier isShutdown;
+  private final int maxRetries;
 
   private long requestStarted;
+
+  private int retryAttempts;
 
   RetryingCallback(
       ToFunctionRequestSummary requestSummary,
       RemoteInvocationMetrics metrics,
       Timeout timeout,
-      BooleanSupplier isShutdown) {
+      BooleanSupplier isShutdown,
+      int maxRetries) {
     this.resultFuture = new CompletableFuture<>();
     this.backoff =
         new BoundedExponentialBackoff(
@@ -69,6 +74,8 @@ final class RetryingCallback implements Callback {
     this.requestSummary = requestSummary;
     this.metrics = metrics;
     this.isShutdown = Objects.requireNonNull(isShutdown);
+    this.maxRetries = maxRetries;
+    this.retryAttempts = 0;
   }
 
   CompletableFuture<Response> future() {
@@ -155,6 +162,17 @@ final class RetryingCallback implements Callback {
     }
 
     response.close();
+
+    if ((maxRetries >= 0) && (response.code() == 500)) {
+      if (retryAttempts < maxRetries) {
+        LOG.warn("Failed attempt " + retryAttempts + " of " + maxRetries + ". Retrying.");
+        retryAttempts++;
+      } else {
+        LOG.warn("Maximum number of attempts (" + maxRetries + ") exceeded. Dropping message.");
+        resultFuture.complete(null);
+        return;
+      }
+    }
 
     if (!isRetryable && response.code() < 500) {
       throw new IllegalStateException("Non successful HTTP response code " + response.code());
