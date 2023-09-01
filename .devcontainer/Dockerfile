@@ -2,6 +2,8 @@ ARG tag="11"
 ARG workdir="/src"
 ARG user="vscode"
 
+FROM openjdk:17 as openjdk17
+
 FROM openjdk:${tag}
 
 ARG workdir
@@ -38,7 +40,12 @@ RUN su ${user} -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/to
 
 # Install maven
 
-RUN apt-get install maven
+RUN apt-get install -y maven
+
+# Copy OpenJDK 17
+
+COPY --from=openjdk17 /usr/java/openjdk-17 /usr/java/openjdk-17
+COPY --from=openjdk17 /etc/pki /etc/pki
 
 WORKDIR ${workdir}
 
