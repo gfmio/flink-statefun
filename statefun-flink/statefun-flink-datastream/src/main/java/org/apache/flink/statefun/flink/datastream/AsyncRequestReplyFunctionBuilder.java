@@ -27,6 +27,12 @@ import org.apache.flink.statefun.flink.core.nettyclient.NettyRequestReplySpec;
 import org.apache.flink.statefun.sdk.FunctionType;
 import org.apache.flink.util.TimeUtils;
 
+import src.main.java.org.apache.flink.statefun.flink.core.httpfn.HttpFunctionEndpointSpec;
+import src.main.java.org.apache.flink.statefun.flink.core.httpfn.TargetFunctions;
+import src.main.java.org.apache.flink.statefun.flink.core.httpfn.TransportClientConstants;
+import src.main.java.org.apache.flink.statefun.flink.core.httpfn.TransportClientSpec;
+import src.main.java.org.apache.flink.statefun.flink.core.httpfn.UrlPathTemplate;
+
 /** A builder for async RequestReply remote function type. */
 public class AsyncRequestReplyFunctionBuilder extends StatefulFunctionBuilder {
 
@@ -112,6 +118,17 @@ public class AsyncRequestReplyFunctionBuilder extends StatefulFunctionBuilder {
    */
   public AsyncRequestReplyFunctionBuilder withMaxNumBatchRequests(int maxNumBatchRequests) {
     builder.withMaxNumBatchRequests(maxNumBatchRequests);
+    return this;
+  }
+
+  /**
+   * Sets the max retries number of attempts in order to deliver a message
+   *
+   * @param maxRetries the maximum number of attempts for delivering a message
+   * @return this builder.
+   */
+  public AsyncRequestReplyFunctionBuilder withMaxRetries(int maxRetries) {
+    builder.withMaxRetries(maxRetries);
     return this;
   }
 
