@@ -56,3 +56,6 @@ statefun-sdk-js/dist/*
 
 /*/bin
 /*/*/bin
+
+.bloop
+.metals
